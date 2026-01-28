@@ -83,9 +83,8 @@ export function LoginPage() {
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-600">
-            <p>Usuario de demostración:</p>
-            <p>Email: <code className="bg-gray-100 px-2 py-1 rounded">admin@portfolio.com</code></p>
-            <p>Contraseña: <code className="bg-gray-100 px-2 py-1 rounded">admin123</code></p>
+            <p className="mb-2">¿No tienes cuenta?</p>
+            <p className="text-blue-600 font-semibold">Contacta al administrador para obtener acceso</p>
           </div>
         </div>
       </div>
