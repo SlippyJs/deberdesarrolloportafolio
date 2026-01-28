@@ -8,7 +8,7 @@ export default defineConfig({
     strictPort: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:5001',
+        target: 'https://deberdesarrolloportafolio.onrender.com',
         changeOrigin: true,
       },
     },
