@@ -3,6 +3,6 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "env": {
-    "VITE_API_URL": "https://deberdesarrolloportafolio.onrender.com/api"
+    "VITE_API_URL": "https://portfolio-backend-6qbc.onrender.com/api"
   }
 }
