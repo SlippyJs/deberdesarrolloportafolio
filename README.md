@@ -378,42 +378,181 @@ El proyecto implementa múltiples capas de seguridad:
 
 ## 🚀 Despliegue
 
-### Frontend (Vercel)
+Este proyecto está desplegado en producción en:
+- **Frontend:** https://deberdesarrolloportafolio.vercel.app
+- **Backend:** https://portfolio-backend-6qbc.onrender.com
+- **Base de Datos:** MongoDB Atlas
 
-1. Crea una cuenta en [Vercel](https://vercel.com)
-2. Conecta tu repositorio
-3. Configura variables de entorno:
-   ```
-   VITE_API_URL=https://tu-backend.com/api
-   ```
-4. Vercel desplegará automáticamente
+### Proceso de Despliegue Realizado
 
-### Backend (Railway o Render)
+#### 1. **Base de Datos - MongoDB Atlas**
+```
+✅ Configurada en: mongodb+srv://portafolio:***@portfolio.kblmxai.mongodb.net/
+✅ Cluster: portfolio
+✅ Servidor: Render
+```
 
-#### Opción 1: Render
+#### 2. **Backend - Render**
 
-1. Crea una cuenta en [Render](https://render.com)
-2. Nuevo "Web Service"
-3. Conecta tu repositorio
-4. Configura:
+1. Crear cuenta en [Render](https://render.com)
+2. Conectar repositorio GitHub: `https://github.com/SlippyJs/deberdesarrolloportafolio`
+3. Crear nuevo Web Service
+4. Configuración:
+   - **Name:** `portfolio-backend`
    - **Root Directory:** `backend`
    - **Build Command:** `npm install`
-   - **Start Command:** `node src/index.js`
-   - Variables de entorno necesarias
+   - **Start Command:** `npm run start`
+   - **Environment:** Node
 
-#### Opción 2: Railway
+5. Variables de Entorno:
+```env
+MONGODB_URI=mongodb+srv://portafolio:674983152a@portfolio.kblmxai.mongodb.net/?appName=portfolio
+JWT_SECRET=portfolio_jwt_secret_super_seguro_2024_SlippyJs_deberdesarrollo
+NODE_ENV=production
+PORT=3000
+FRONTEND_URL=https://deberdesarrolloportafolio.vercel.app
+```
 
-1. Crea cuenta en [Railway](https://railway.app)
-2. Conecta tu repositorio
-3. Configura variables de entorno
-4. Railway desplegará automáticamente
+6. El backend se despliega automáticamente con cada push a `main`
 
-### Base de Datos (MongoDB Atlas)
+**URL de Producción:** https://portfolio-backend-6qbc.onrender.com
 
-1. Crea una cuenta en [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Crea un cluster gratuito
-3. Obtén tu conexión string
-4. Añade la URL a variables de entorno
+#### 3. **Frontend - Vercel**
+
+1. Crear cuenta en [Vercel](https://vercel.com)
+2. Conectar repositorio GitHub
+3. Importar proyecto
+4. Configuración:
+   - **Project Name:** `deberdesarrolloportafolio`
+   - **Framework:** Vite
+   - **Root Directory:** `frontend`
+
+5. Variables de Entorno:
+```env
+VITE_API_URL=https://portfolio-backend-6qbc.onrender.com/api
+```
+
+6. Vercel despliega automáticamente con cada push
+
+**URL de Producción:** https://deberdesarrolloportafolio.vercel.app
+
+#### 4. **Configuración de CORS**
+
+Se implementó CORS flexible en el backend para permitir solicitudes desde:
+- `https://deberdesarrolloportafolio.vercel.app` (producción)
+- `http://localhost:5173` (desarrollo)
+- `http://localhost:3000` (desarrollo alternativo)
+
+Código en `backend/src/index.js`:
+```javascript
+const allowedOrigins = [
+  'https://deberdesarrolloportafolio.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS no permitido'));
+      }
+    },
+    credentials: true,
+  })
+);
+```
+
+#### 5. **Configuración del Frontend**
+
+**Archivo: `frontend/.env`**
+```env
+VITE_API_URL=https://portfolio-backend-6qbc.onrender.com/api
+```
+
+**Archivo: `frontend/vercel.json`**
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "env": {
+    "VITE_API_URL": "https://portfolio-backend-6qbc.onrender.com/api"
+  }
+}
+```
+
+**Archivo: `frontend/src/utils/api.js`**
+```javascript
+const API_URL = import.meta.env.VITE_API_URL || 'https://portfolio-backend-6qbc.onrender.com/api';
+```
+
+### Flujo de Despliegue Automático
+
+```
+Local → Git Push → GitHub
+                     ↓
+         ┌───────────┴───────────┐
+         ↓                       ↓
+      Render                  Vercel
+      (Backend)              (Frontend)
+         ↓                       ↓
+    Compilar                  Compilar
+    Desplegar                 Desplegar
+         ↓                       ↓
+    En Vivo 🟢                En Vivo 🟢
+```
+
+### Verificar Estado del Despliegue
+
+**Backend - Logs en Render:**
+```
+✓ Conectado a MongoDB
+🚀 Servidor corriendo en http://localhost:10000
+📚 API disponible en http://localhost:10000/api
+==> Your service is live 🎉
+```
+
+**Frontend - Build en Vercel:**
+- Acceder a: https://deberdesarrolloportafolio.vercel.app
+- Debería cargar tu portafolio sin errores
+- Console sin errores CORS
+
+### Solución de Problemas
+
+**Error: Network Error**
+- Verificar que el backend está en "Live" (verde en Render)
+- Verificar que `VITE_API_URL` es correcto en Vercel
+
+**Error: CORS Policy**
+- Verificar que `FRONTEND_URL` en Render es `https://deberdesarrolloportafolio.vercel.app`
+- Verificar que el origen está en `allowedOrigins` en `index.js`
+
+**Base de Datos Desconectada**
+- Verificar que `MONGODB_URI` es válida
+- Verificar que MongoDB Atlas permite IP de Render (0.0.0.0/0 en network access)
+
+### Comandos Git para Despliegue
+
+```bash
+# Ver cambios
+git status
+
+# Añadir cambios
+git add .
+
+# Hacer commit
+git commit -m "Descripción de cambios"
+
+# Hacer push (dispara despliegue automático)
+git push origin main
+```
+
+Cada push a la rama `main` dispara automáticamente:
+- ✅ Build en Render (Backend)
+- ✅ Build en Vercel (Frontend)
 
 ## 📊 Diagrama de Flujo
 
