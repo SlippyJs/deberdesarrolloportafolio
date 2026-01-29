@@ -55,6 +55,7 @@ export const getBio = async (req, res, next) => {
     }
     res.json(bio);
   } catch (error) {
+    console.error('Error en getBio:', error);
     next(error);
   }
 };
